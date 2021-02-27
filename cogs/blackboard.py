@@ -23,6 +23,20 @@ class BlackBoard(commands.Cog):
     async def remove(self, ctx):
         pass
 
+    def line(self, ctx):
+        string = ""
+        for k, v in self.questionFiles.items():
+            string += f"Q: {k}\n  A: {v}\n"
+        return string
+
+    @commands.command()
+    async def show(self, ctx):
+        embed = discord.Embed(title=f'All questions & answers',
+                              description= self.line(ctx),
+                              color=0x00aa00
+                              )
+        await ctx.send(embed=embed)
+
     @commands.command()
     async def points(self, ctx):
         pass

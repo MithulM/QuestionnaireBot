@@ -8,10 +8,8 @@ class BlackBoard(commands.Cog):
         self.client = client
 
     @commands.command()
-    def addQuestion(self, ctx):
+    async def addQuestion(self, ctx):
         pass
-
-
 
 def setup(client):
     client.add_cog(BlackBoard(client))

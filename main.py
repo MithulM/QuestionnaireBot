@@ -3,8 +3,10 @@ import discord
 from discord.ext import commands
 
 tokenFile = open("token.txt", "r")
+prefix = tokenFile.readline().replace("\n", "")
+print(prefix)
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
-client = commands.Bot(command_prefix = tokenFile.readline(), intents = intents)
+client = commands.Bot(command_prefix = prefix, intents = intents)
 
 @client.event
 async def on_ready():
@@ -45,5 +47,5 @@ async def load_error(ctx, error):
         await ctx.send('Please specify a cog to load.')
 
 
-client.run(tokenFile.readline())
+client.run(tokenFile.readline().replace("\n", ""))
 tokenFile.close()

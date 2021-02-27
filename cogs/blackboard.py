@@ -5,7 +5,8 @@ from discord.ext import commands
 class BlackBoard(commands.Cog):
 
     def __init__(self, client):
-        self.questionFiles = defaultdict()
+        self.userPoints = {}
+        self.questionFiles = {}
         self.client = client
         self.defaultFile = None
 
@@ -26,7 +27,7 @@ class BlackBoard(commands.Cog):
     def line(self, ctx):
         string = ""
         for k, v in self.questionFiles.items():
-            string += f"Q: {k}\n  A: {v}\n"
+            string += f"Q: {k}\n A: {v}\n"
         return string
 
     @commands.command()
@@ -51,11 +52,23 @@ class BlackBoard(commands.Cog):
 
     @commands.command()
     async def join(self, ctx):
-        pass
+        username = ctx.message.author.name + "#" + ctx.message.author.discriminator
+        self.userPoints[username] = 0
+        embed = discord.Embed(title=f'User added',
+                              description=f"User: {username}\n Points: 0",
+                              color=0x00aa00
+                              )
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def leave(self, ctx):
-        pass
+        username = ctx.message.author.name + "#" + ctx.message.author.discriminator
+        del self.userPoints[username]
+        embed = discord.Embed(title=f'User left',
+                              description=f"User: {username}\n",
+                              color=0x00aa00
+                              )
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def printQuestion(self, ctx):

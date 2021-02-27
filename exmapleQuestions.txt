@@ -1,0 +1,7 @@
+Q:question 1 ?
+A:answer 1
+choose:
+a,
+
+Q:question2?
+A:answer 2

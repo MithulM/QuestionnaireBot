@@ -69,7 +69,7 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def remove(self, ctx, all = ""):
         if len(self.questionFiles) == 0:
-            embed = discord.Embed(title=f'There are no questions to remove.',
+            embed = discord.Embed(title=f'No questions to remove :slight_frown:',
                                   color=0x00aa00
                                   )
             await ctx.send(embed=embed)
@@ -100,7 +100,7 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def showQuestions(self, ctx):
         if len(self.questionFiles) == 0:
-            embed = discord.Embed(title=f'There are no questions.',
+            embed = discord.Embed(title=f'There are no questions. :slight_frown:',
                                   color=0x00aa00
                                   )
         else:
@@ -108,6 +108,22 @@ class BlackBoard(commands.Cog):
                                   description=self.questionOutput(ctx),
                                   color=0x00aa00
                                   )
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def party(self, ctx):
+        string = ""
+        for k, v in self.userPoints.items():
+            string += f"{ctx.message.guild.get_member(k)} \n"
+        if string == "":
+            embed = discord.Embed(title=f'No party members  :slight_frown:',
+                                  color=0x00aa00
+                                  )
+        else:
+            embed = discord.Embed(title=f'Party members: ',
+                              description = string,
+                              color=0x00aa00
+                              )
         await ctx.send(embed=embed)
 
     def points(self, ctx):
@@ -132,7 +148,7 @@ class BlackBoard(commands.Cog):
         if userid in self.userPoints:
             del self.userPoints[ctx.message.author.id]
             embed = discord.Embed(title=f'User left',
-                                  description=f"User: {ctx.message.author.get_member(userid)}\n",
+                                  description=f"User: {ctx.message.guild.get_member(userid)}\n",
                                   color=0x00aa00
                                   )
         else:

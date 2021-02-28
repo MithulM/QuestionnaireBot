@@ -261,6 +261,7 @@ class BlackBoard(commands.Cog):
 
     @commands.command()
     async def loadQ(self, ctx, spliting, *a):
+        a = a[0].strip("\n").split("\n")
         print(spliting, a)
         for i in a:
             q, ans = i.split(spliting)

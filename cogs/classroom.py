@@ -3,6 +3,8 @@ from discord.ext import commands
 import asyncio
 import random
 import math
+import re
+
 
 class BlackBoard(commands.Cog):
 
@@ -21,7 +23,7 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def start(self, ctx):
         if len(self.userPoints) == 0 or len(self.questionFiles) == 0:
-            await ctx.send(embed = discord.Embed(title = "There are no players or questions.", color = 0x00aa00))
+            await ctx.send(embed=discord.Embed(title="There are no players or questions.", color=0x00aa00))
             return
         channel = await ctx.guild.create_text_channel('classroom-game')
         self.defaultChannel = channel
@@ -34,7 +36,8 @@ class BlackBoard(commands.Cog):
             self.point = 1000
             del self.questionFiles[randQ]
             embed = discord.Embed(title=f"Question **#{i}**", description=randQ, color=0x00aa00)
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/two-oclock_1f551.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/two-oclock_1f551.png")
             await channel.send(embed=embed)
             if self.endGame:
                 break
@@ -44,7 +47,8 @@ class BlackBoard(commands.Cog):
             if self.endGame:
                 break
             embed = discord.Embed(title=f"Time's up!", description="The answer was: " + randA, color=0x00aa00)
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/grinning-face-with-sweat_1f605.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/grinning-face-with-sweat_1f605.png")
             await channel.send(embed=embed)
             if self.endGame:
                 break
@@ -60,7 +64,8 @@ class BlackBoard(commands.Cog):
                 break
             i += 1
         embed = discord.Embed(title=f"The game has ended. Deleting channel in 5 seconds", color=0x00aa00)
-        embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/waving-hand_1f44b.png")
+        embed.set_thumbnail(
+            url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/waving-hand_1f44b.png")
         await channel.send(embed=embed)
         await asyncio.sleep(5)
         self.questionFiles = {}
@@ -86,7 +91,7 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def abort(self, ctx):
         self.endGame = True
-        await ctx.send(embed = discord.Embed(title="Game aborted", color=0x00aa00))
+        await ctx.send(embed=discord.Embed(title="Game aborted", color=0x00aa00))
 
     @commands.command()
     async def timer(self, time):
@@ -100,7 +105,8 @@ class BlackBoard(commands.Cog):
                                   footer=f"Number of questions: **{len(self.questionFiles)}**",
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/face-with-monocle_1f9d0.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/face-with-monocle_1f9d0.png")
         else:
             if question in self.questionFiles:
                 self.questionFiles[question] = answer
@@ -109,7 +115,8 @@ class BlackBoard(commands.Cog):
                                       footer=f"Number of questions: **{len(self.questionFiles)}**",
                                       color=0x00aa00
                                       )
-                embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/ok-hand_1f44c.png")
+                embed.set_thumbnail(
+                    url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/ok-hand_1f44c.png")
             else:
                 self.questionFiles[question] = answer
                 embed = discord.Embed(title=f'Question added',
@@ -117,7 +124,8 @@ class BlackBoard(commands.Cog):
                                       footer=f"Number of questions: **{len(self.questionFiles)}**",
                                       color=0x00aa00
                                       )
-                embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/check-mark-button_2705.png")
+                embed.set_thumbnail(
+                    url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/check-mark-button_2705.png")
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -126,7 +134,8 @@ class BlackBoard(commands.Cog):
             embed = discord.Embed(title=f'No questions to remove',
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/worried-face_1f61f.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/worried-face_1f61f.png")
             await ctx.send(embed=embed)
             return
         question = []
@@ -139,20 +148,23 @@ class BlackBoard(commands.Cog):
                                   description="Example: **!remove 5**\nPlease enter a number to remove:\n" + questions,
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/thinking-face_1f914.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/thinking-face_1f914.png")
             await ctx.send(embed=embed)
         elif 0 <= int(all) - 1 < len(question):
             del self.questionFiles[question[int(all) - 1]]
             embed = discord.Embed(title=f'Removed question **#{all}**',
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/thumbs-up_1f44d.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/thumbs-up_1f44d.png")
             await ctx.send(embed=embed)
         else:
             embed = discord.Embed(title=f'Please enter a **valid index** to remove',
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/pouting-face_1f621.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/pouting-face_1f621.png")
             await ctx.send(embed=embed)
 
     @commands.command()
@@ -161,7 +173,8 @@ class BlackBoard(commands.Cog):
             embed = discord.Embed(title=f'There are no questions',
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/cold-face_1f976.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/cold-face_1f976.png")
         else:
             embed = discord.Embed(title=f'Questions & answers:',
                                   description=self.questionOutput(),
@@ -178,18 +191,20 @@ class BlackBoard(commands.Cog):
             embed = discord.Embed(title=f'No party members',
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/sneezing-face_1f927.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/sneezing-face_1f927.png")
         else:
             embed = discord.Embed(title=f'Party members:',
-                              description = string,
-                              color=0x00aa00
-                              )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/partying-face_1f973.png")
+                                  description=string,
+                                  color=0x00aa00
+                                  )
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/partying-face_1f973.png")
         await ctx.send(embed=embed)
 
     def points(self, ctx):
         string = ""
-        for k, v in sorted(self.userPoints.items(), key = lambda x: x[1], reverse=True):
+        for k, v in sorted(self.userPoints.items(), key=lambda x: x[1], reverse=True):
             string += f"**{ctx.message.guild.get_member(k)}**: __{v}__\n"
         return string
 
@@ -203,15 +218,20 @@ class BlackBoard(commands.Cog):
                               )
         num = random.randint(0, 100)
         if num < 20:
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/cowboy-hat-face_1f920.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/cowboy-hat-face_1f920.png")
         elif num < 40:
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/disguised-face_1f978.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/disguised-face_1f978.png")
         elif num < 60:
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/nerd-face_1f913.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/nerd-face_1f913.png")
         elif num < 80:
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/robot_1f916.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/robot_1f916.png")
         else:
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/alien_1f47d.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/alien_1f47d.png")
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -223,12 +243,14 @@ class BlackBoard(commands.Cog):
                                   description=f"**User:** {ctx.message.guild.get_member(userid)}\n",
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/loudly-crying-face_1f62d.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/loudly-crying-face_1f62d.png")
         else:
             embed = discord.Embed(title=f'You are not in the party!',
                                   color=0x00aa00
                                   )
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/grimacing-face_1f62c.png")
+            embed.set_thumbnail(
+                url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/twitter/259/grimacing-face_1f62c.png")
         await ctx.send(embed=embed)
 
     def questionOutput(self):
@@ -239,6 +261,7 @@ class BlackBoard(commands.Cog):
 
     @commands.command()
     async def loadQ(self, ctx, spliting, *a):
+        print(spliting, a)
         for i in a:
             q, ans = i.split(spliting)
             await self.add(ctx, q, ans)
@@ -261,6 +284,7 @@ class BlackBoard(commands.Cog):
                               color=0x0182ff
                               )
         await ctx.send(embed=embed)
+
 
 def setup(client):
     client.add_cog(BlackBoard(client))

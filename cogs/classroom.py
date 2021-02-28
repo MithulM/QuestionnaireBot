@@ -90,9 +90,10 @@ class BlackBoard(commands.Cog):
         self.time = int(time)
 
     @commands.command()
-    async def loadQ(self, *a):
-        spliting = "//a//"
-        print(a)
+    async def loadQ(self, ctx, spliting, *a):
+        for i in a:
+            q, ans = i.split(spliting)
+            await self.add(ctx, q, ans)
 
     @commands.command()
     async def add(self, ctx, question, answer, *a):

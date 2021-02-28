@@ -1,7 +1,8 @@
 import discord
 from collections import defaultdict
 from discord.ext import commands
-
+import asyncio
+import random
 
 class BlackBoard(commands.Cog):
 
@@ -12,6 +13,29 @@ class BlackBoard(commands.Cog):
         self.userPoints = {}
 
     @commands.command()
+    async def startGame(self, ctx):
+        channel = await ctx.guild.create_text_channel('classroom-game-channel')
+        i = 1
+        while self.questionFiles:
+            randQ, randA = random.choice(list(self.questionFiles.items()))
+            del self.questionFiles[randQ]
+            embed = discord.Embed(title=f"Question #{i}",
+                                  description=randQ,
+                                  color=0x00aa00)
+            await channel.send(embed = embed)
+            await asyncio.sleep(3)
+            embed = discord.Embed(title=f"Answer",
+                                  description=randA,
+                                  color=0x00aa00)
+            await channel.send(embed = embed)
+            i += 1
+        embed = discord.Embed(title=f"Game has ended.",
+                              color=0x00aa00)
+
+        await channel.send(embed=embed)
+        await channel.delete()
+
+    @commands.command()
     async def add(self, ctx, question, answer, *a):
         if len(self.questionFiles) > self.MAXQ - 1:
             embed = discord.Embed(title=f"Can't add anymore question.",
@@ -20,15 +44,14 @@ class BlackBoard(commands.Cog):
                                   color=0x00aa00
                                   )
         else:
-            try:
-                self.questionFiles[question]
+            if question in self.questionFiles:
                 self.questionFiles = answer
                 embed = discord.Embed(title=f'Updated question',
                                       description=f"Old Q: {question}\nNew A: {answer}",
                                       footer=f"Number of questions: {len(self.questionFiles)}",
                                       color=0x00aa00
                                       )
-            except KeyError:
+            else:
                 self.questionFiles[question] = answer
                 embed = discord.Embed(title=f'Question added',
                                       description=f"Q: {question}\nA: {answer}",
@@ -91,10 +114,6 @@ class BlackBoard(commands.Cog):
                               color=0x00aa00
                               )
         await ctx.send(embed = embed)
-
-    @commands.command()
-    async def startGame(self, ctx):
-        pass
 
     @commands.command()
     async def join(self, ctx):

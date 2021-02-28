@@ -2,16 +2,21 @@ import discord
 from discord.ext import commands
 import asyncio
 import random
-
+import math
 
 class BlackBoard(commands.Cog):
 
     def __init__(self, client):
         self.questionFiles = {}
         self.client = client
-        self.MAX_Q = 5
+        self.MAX_Q = 25
         self.userPoints = {}
         self.defaultChannel = None
+        self.time = 10
+        self.notAnswerd = set()
+        self.answer = ""
+        self.point = 1000
+        self.endGame = False
 
     @commands.command()
     async def start(self, ctx):
@@ -26,16 +31,31 @@ class BlackBoard(commands.Cog):
         i = 1
         while self.questionFiles:
             randQ, randA = random.choice(list(self.questionFiles.items()))
+            self.point = 1000
             del self.questionFiles[randQ]
             embed = discord.Embed(title=f"Question #{i}", description=randQ, color=0x00aa00)
             await channel.send(embed=embed)
-            await asyncio.sleep(3)
-            embed = discord.Embed(title=f"Times up!!  :open_mouth:", description="The answer was: " + randA, color=0x00aa00)
+            if self.endGame:
+                break
+            self.notAnswerd = set(self.userPoints.keys())
+            self.answer = randA
+            await asyncio.sleep(self.time)
+            if self.endGame:
+                break
+            embed = discord.Embed(title=f"Time's up!!  :open_mouth:", description="The answer was: " + randA, color=0x00aa00)
             await channel.send(embed=embed)
+            if self.endGame:
+                break
             await asyncio.sleep(1)
+            if self.endGame:
+                break
             embed = discord.Embed(title=f"Scores", description=self.points(ctx), color=0x00aa00)
             await asyncio.sleep(1)
+            if self.endGame:
+                break
             await channel.send(embed=embed)
+            if self.endGame:
+                break
             i += 1
         embed = discord.Embed(title=f"Game has ended. Deleting channel in 5 seconds. :wave:", color=0x00aa00)
         await channel.send(embed=embed)
@@ -45,10 +65,34 @@ class BlackBoard(commands.Cog):
         self.gameChannel = None
         await channel.delete()
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if self.defaultChannel != None and self.defaultChannel.id == message.channel.id:
+            if not message.author.bot and message.content[0] != "!":
+                if message.author.id in self.notAnswerd:
+                    if self.answer.lower() == message.content.lower():
+                        await message.author.send(f"{message.content} was __**Correct**__.")
+                        self.userPoints[message.author.id] += self.point
+                        self.point = math.ceil(self.point * .85)
+                        self.notAnswerd.remove(message.author.id)
+                    else:
+                        await message.author.send(f"{message.content} was __**Incorrect**__.\nTry again")
+                if not message.author.bot:
+                    await message.delete()
+
+    @commands.command()
+    async def abort(self, ctx):
+        self.endGame = True
+        await ctx.send(embed = discord.Embed(title="Game aborted", color=0x00aa00))
+
+    @commands.command()
+    async def newtimer(self, time):
+        self.time = int(time)
+
     @commands.command()
     async def add(self, ctx, question, answer, *a):
         if len(self.questionFiles) > self.MAX_Q - 1:
-            embed = discord.Embed(title=f"Can't add anymore question.  :cold_face:",
+            embed = discord.Embed(title=f"Can't add anymore questions?  :cold_face:",
                                   description=f"Maximum number of questions reached",
                                   footer=f"Number of questions: {len(self.questionFiles)}",
                                   color=0x00aa00
@@ -57,7 +101,7 @@ class BlackBoard(commands.Cog):
             if question in self.questionFiles:
                 self.questionFiles[question] = answer
                 embed = discord.Embed(title=f'Updated question.  :ok_hand:',
-                                      description=f"Old Q: {question}\nNew A: {answer}",
+                                      description=f"New Q: {question}\nNew A: {answer}",
                                       footer=f"Number of questions: {len(self.questionFiles)}",
                                       color=0x00aa00
                                       )
@@ -70,10 +114,7 @@ class BlackBoard(commands.Cog):
                                       )
         await ctx.send(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if self.defaultChannel == message.channel.id:
-            pass
+
 
     @commands.command()
     async def remove(self, ctx, all=""):
@@ -136,9 +177,9 @@ class BlackBoard(commands.Cog):
         await ctx.send(embed=embed)
 
     def points(self, ctx):
-        string = "Player: Points\n"
-        for k, v in self.userPoints.items():
-            string += f"{ctx.message.guild.get_member(k)}: {v}\n"
+        string = ""
+        for k, v in sorted(self.userPoints.items(), key = lambda x: x[1], reverse=True):
+            string += f"**{ctx.message.guild.get_member(k)}**: __{v}__\n"
         return string
 
     @commands.command()

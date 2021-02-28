@@ -7,6 +7,7 @@ prefix = tokenFile.readline().replace("\n", "")
 print(prefix)
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
 client = commands.Bot(command_prefix = prefix, intents = intents)
+client.remove_command("help")
 
 @client.event
 async def on_ready():

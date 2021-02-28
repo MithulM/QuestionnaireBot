@@ -115,11 +115,16 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def leave(self, ctx):
         username = ctx.message.author.name + "#" + ctx.message.author.discriminator
-        del self.userPoints[username]
-        embed = discord.Embed(title=f'User left',
-                              description=f"User: {username}\n",
-                              color=0x00aa00
-                              )
+        if username in self.userPoints:
+            del self.userPoints[username]
+            embed = discord.Embed(title=f'User left',
+                                  description=f"User: {username}\n",
+                                  color=0x00aa00
+                                  )
+        else:
+            embed = discord.Embed(title=f'Seems like you are not in the party.',
+                                  color=0x00aa00
+                                  )
         await ctx.send(embed=embed)
 
     @commands.command()

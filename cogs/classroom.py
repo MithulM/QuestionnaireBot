@@ -121,7 +121,6 @@ class BlackBoard(commands.Cog):
         await ctx.send(embed=embed)
 
 
-
     @commands.command()
     async def remove(self, ctx, all=""):
         if len(self.questionFiles) == 0:

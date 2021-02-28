@@ -120,8 +120,6 @@ class BlackBoard(commands.Cog):
                 embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/259/check-mark-button_2705.png")
         await ctx.send(embed=embed)
 
-
-
     @commands.command()
     async def remove(self, ctx, all=""):
         if len(self.questionFiles) == 0:

@@ -14,11 +14,11 @@ class BlackBoard(commands.Cog):
         self.defaultChannel = None
 
     @commands.command()
-    async def startGame(self, ctx):
+    async def start(self, ctx):
         if len(self.userPoints) == 0 or len(self.questionFiles) == 0:
             await ctx.send(embed = discord.Embed(title = "There are no players or questions.", color = 0x00aa00))
             return
-        channel = await ctx.guild.create_text_channel('classroom-game-channel')
+        channel = await ctx.guild.create_text_channel('classroom-game')
         self.defaultChannel = channel
         await channel.set_permissions(ctx.guild.default_role, send_messages=False)
         for user in self.userPoints:
@@ -69,6 +69,11 @@ class BlackBoard(commands.Cog):
                                       color=0x00aa00
                                       )
         await ctx.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if self.defaultChannel == message.channel.id:
+            pass
 
     @commands.command()
     async def remove(self, ctx, all=""):

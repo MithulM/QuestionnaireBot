@@ -68,12 +68,6 @@ class BlackBoard(commands.Cog):
                                   )
             await ctx.send(embed=embed)
 
-    def line(self, ctx):
-        string = ""
-        for k, v in self.questionFiles.items():
-            string += f"Q: {k}\nA: {v}\n\n"
-        return string
-
     @commands.command()
     async def show(self, ctx):
         if len(self.questionFiles) == 0:
@@ -82,9 +76,9 @@ class BlackBoard(commands.Cog):
                                   )
         else:
             embed = discord.Embed(title=f'All questions & answers',
-                              description=self.line(ctx),
-                              color=0x00aa00
-                              )
+                                  description=self.questionOutput(ctx),
+                                  color=0x00aa00
+                                  )
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -127,20 +121,14 @@ class BlackBoard(commands.Cog):
                                   )
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def printQuestion(self, ctx):
-        pass
+    def questionOutput(self, ctx):
+        string = ""
+        for k, v in self.questionFiles.items():
+            string += f"Q: {k}\nA: {v}\n\n"
+        return string
 
-    @commands.command()
-    async def printAnswer(self, ctx):
-        pass
-
-    @commands.command()
-    async def getData(self, ctx):
-        pass
-
-    def addPoints(self):
-        pass
+    def addPoints(self, user, points):
+        self.userPoints[user] += points
 
 
 def setup(client):

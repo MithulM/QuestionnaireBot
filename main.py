@@ -4,7 +4,7 @@ from discord.ext import commands
 
 tokenFile = open("token.txt", "r")
 prefix = tokenFile.readline().replace("\n", "")
-print(prefix)
+print("Prefix:", prefix)
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
 client = commands.Bot(command_prefix = prefix, intents = intents)
 client.remove_command("help")

@@ -90,6 +90,11 @@ class BlackBoard(commands.Cog):
         self.time = int(time)
 
     @commands.command()
+    async def loadQ(self, *a):
+        spliting = "//a//"
+        print(a)
+
+    @commands.command()
     async def add(self, ctx, question, answer, *a):
         if len(self.questionFiles) > self.MAX_Q - 1:
             embed = discord.Embed(title=f"Can't add anymore questions?  :cold_face:",

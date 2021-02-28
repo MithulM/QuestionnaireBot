@@ -15,7 +15,7 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def startGame(self, ctx):
         if len(self.userPoints) == 0 or len(self.questionFiles) == 0:
-            await ctx.send(embed = discord.Embed(title = "There are no players or questions in game.", color = 0x00aa00))
+            await ctx.send(embed = discord.Embed(title = "There are no players or questions", color = 0x00aa00))
             return
         channel = await ctx.guild.create_text_channel('classroom-game-channel')
         await channel.set_permissions(ctx.guild.default_role, send_messages=False)
@@ -28,14 +28,14 @@ class BlackBoard(commands.Cog):
             embed = discord.Embed(title=f"Question #{i}", description=randQ, color=0x00aa00)
             await channel.send(embed=embed)
             await asyncio.sleep(3)
-            embed = discord.Embed(title=f"Times up!!", description="The answer was: " + randA, color=0x00aa00)
+            embed = discord.Embed(title=f"Times up!!  :open_mouth:", description="The answer was: " + randA, color=0x00aa00)
             await channel.send(embed=embed)
             await asyncio.sleep(1)
             embed = discord.Embed(title=f"Scores", description=self.points(ctx), color=0x00aa00)
             await asyncio.sleep(1)
             await channel.send(embed=embed)
             i += 1
-        embed = discord.Embed(title=f"Game has ended.", color=0x00aa00)
+        embed = discord.Embed(title=f"Game has ended  :wave:", color=0x00aa00)
         await channel.send(embed=embed)
         self.questionFiles = {}
         self.userPoints = {}
@@ -44,7 +44,7 @@ class BlackBoard(commands.Cog):
     @commands.command()
     async def add(self, ctx, question, answer, *a):
         if len(self.questionFiles) > self.MAX_Q - 1:
-            embed = discord.Embed(title=f"Can't add anymore question.",
+            embed = discord.Embed(title=f"Can't add anymore questions  :cold_face:",
                                   description=f"Maximum number of questions reached",
                                   footer=f"Number of questions: {len(self.questionFiles)}",
                                   color=0x00aa00
@@ -52,14 +52,14 @@ class BlackBoard(commands.Cog):
         else:
             if question in self.questionFiles:
                 self.questionFiles[question] = answer
-                embed = discord.Embed(title=f'Updated question',
+                embed = discord.Embed(title=f'Updated question  :ok_hand:',
                                       description=f"Old Q: {question}\nNew A: {answer}",
                                       footer=f"Number of questions: {len(self.questionFiles)}",
                                       color=0x00aa00
                                       )
             else:
                 self.questionFiles[question] = answer
-                embed = discord.Embed(title=f'Question added',
+                embed = discord.Embed(title=f'Question added  :white_check_mark:',
                                       description=f"Q: {question}\nA: {answer}",
                                       footer=f"Number of questions: {len(self.questionFiles)}",
                                       color=0x00aa00
@@ -80,7 +80,7 @@ class BlackBoard(commands.Cog):
             question.append(k)
             questions += f"{i + 1}) {k}\n"
         if all == "":
-            embed = discord.Embed(title=f'Which one question do you want to remove?',
+            embed = discord.Embed(title=f'Which question do you want to remove?',
                                   description="Example: !remove 5\nPlease enter the number to remove:\n" + questions,
                                   color=0x00aa00
                                   )
@@ -120,7 +120,7 @@ class BlackBoard(commands.Cog):
                                   color=0x00aa00
                                   )
         else:
-            embed = discord.Embed(title=f'Party members: ',
+            embed = discord.Embed(title=f'Party members  :tada:',
                               description = string,
                               color=0x00aa00
                               )
@@ -152,7 +152,7 @@ class BlackBoard(commands.Cog):
                                   color=0x00aa00
                                   )
         else:
-            embed = discord.Embed(title=f'Seems like you are not in the party.',
+            embed = discord.Embed(title=f'You are not in the party  :grimacing:',
                                   color=0x00aa00
                                   )
         await ctx.send(embed=embed)

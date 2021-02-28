@@ -1,4 +1,5 @@
 import discord
+import random
 from collections import defaultdict
 from discord.ext import commands
 
@@ -40,7 +41,14 @@ class BlackBoard(commands.Cog):
 
     @commands.command()
     async def points(self, ctx):
-        pass
+        string = "Player: Points\n"
+        for k, v in self.userPoints.items():
+            string += f"{k}: {v}\n"
+        embed = discord.Embed(title=f'Points of all players',
+                              description=string,
+                              color=0x00aa00
+                              )
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def startGame(self, ctx):
@@ -72,11 +80,7 @@ class BlackBoard(commands.Cog):
 
     @commands.command()
     async def printQuestion(self, ctx):
-        pass
-
-    @commands.command()
-    async def printAnswer(self, ctx):
-        pass
+        randQuestion = random.choice(self.questionFiles.items())
 
     @commands.command()
     async def getData(self, ctx):

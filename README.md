@@ -1,5 +1,4 @@
 # QuestionnaireBot
-Discord for Bot testing: https://discord.gg/zfvbxb9b
 
 ![screenshot](utd1.png)
 
